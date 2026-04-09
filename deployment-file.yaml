@@ -1,0 +1,6 @@
+template-file-path: cloudformation/policy.yaml
+stack-name: iam-automation-stack
+parameters: {}
+tags:
+  Project: iam-automation
+  ManagedBy: GitSync
