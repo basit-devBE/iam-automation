@@ -14,6 +14,7 @@ Resources:
         GenerateStringKey: "password"
         PasswordLength: 16
         ExcludeCharacters: '"@/\\'
+        RequireEachIncludedType: true
 
   S3GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -36,6 +37,7 @@ Resources:
       GroupName: S3UserGroup
       ManagedPolicyArns:
       - !Ref S3GroupPolicy
+      - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -62,6 +64,7 @@ Resources:
       GroupName: EC2UserGroup
       ManagedPolicyArns:
       - !Ref EC2GroupPolicy
+      - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2User1:
     Type: AWS::IAM::User
@@ -72,6 +75,7 @@ Resources:
         PasswordResetRequired: true
       Groups:
       - !Ref EC2UserGroup
+
   EC2User2:
     Type: AWS::IAM::User
     Properties:
