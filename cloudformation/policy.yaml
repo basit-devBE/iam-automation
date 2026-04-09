@@ -76,6 +76,9 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: ec2-user2
+      LoginProfile:
+        Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
+        PasswordResetRequired: true
       Groups:
       - !Ref EC2UserGroup
 
