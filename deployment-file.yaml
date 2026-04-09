@@ -1,6 +1,5 @@
 template-file-path: cloudformation/policy.yaml
-
-stack-name: iam-automation-stack
+stack-name: IAM-automation-lab
 parameters: {}
 tags:
   Project: iam-automation
