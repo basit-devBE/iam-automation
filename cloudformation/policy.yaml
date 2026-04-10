@@ -2,23 +2,69 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   IAM Resources Lab - Creating IAM users, groups, policies, temporary credentials stored in Secrets Manager
 
+Parameters:
+  SecretName:
+    Type: String
+    Default: TemporaryCredentials
+    Description: Name of the Secrets Manager secret for temporary IAM user credentials
+
+  TempPasswordLength:
+    Type: Number
+    Default: 16
+    Description: Length of the auto-generated temporary password
+
+  S3PolicyName:
+    Type: String
+    Default: S3ReadOnlyAccess
+    Description: Name of the managed policy for S3 users
+
+  EC2PolicyName:
+    Type: String
+    Default: EC2GroupAccess
+    Description: Name of the managed policy for EC2 users
+
+  S3GroupName:
+    Type: String
+    Default: S3UserGroup
+    Description: Name of the IAM group for S3 users
+
+  EC2GroupName:
+    Type: String
+    Default: EC2UserGroup
+    Description: Name of the IAM group for EC2 users
+
+  EC2User1Name:
+    Type: String
+    Default: ec2-user1
+    Description: IAM username for the first EC2 user
+
+  EC2User2Name:
+    Type: String
+    Default: ec2-user2
+    Description: IAM username for the second EC2 user
+
+  S3UserName:
+    Type: String
+    Default: s3-user
+    Description: IAM username for the S3 user
+
 Resources:
   TemporaryCredentialsSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: TemporaryCredentials
+      Name: !Ref SecretName
       Description: "Temporary credentials for IAM users"
       GenerateSecretString:
         SecretStringTemplate: '{"username": "temp_user"}'
         GenerateStringKey: "password"
-        PasswordLength: 16
+        PasswordLength: !Ref TempPasswordLength
         ExcludeCharacters: '"@/\\'
         RequireEachIncludedType: true
 
   S3GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: S3ReadOnlyAccess
+      ManagedPolicyName: !Ref S3PolicyName
       Description: "Allows users to list all S3 buckets and get bucket location"
       PolicyDocument:
         Version: '2012-10-17'
@@ -33,7 +79,7 @@ Resources:
   S3UserGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: S3UserGroup
+      GroupName: !Ref S3GroupName
       ManagedPolicyArns:
       - !Ref S3GroupPolicy
       - arn:aws:iam::aws:policy/IAMUserChangePassword
@@ -41,7 +87,7 @@ Resources:
   EC2GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: EC2GroupAccess
+      ManagedPolicyName: !Ref EC2PolicyName
       Description: "Allows users to list and create EC2 instances"
       PolicyDocument:
         Version: '2012-10-17'
@@ -65,7 +111,7 @@ Resources:
   EC2UserGroup:
     Type: AWS::IAM::Group
     Properties:
-      GroupName: EC2UserGroup
+      GroupName: !Ref EC2GroupName
       ManagedPolicyArns:
       - !Ref EC2GroupPolicy
       - arn:aws:iam::aws:policy/IAMUserChangePassword
@@ -73,7 +119,7 @@ Resources:
   EC2User1:
     Type: AWS::IAM::User
     Properties:
-      UserName: ec2-user1
+      UserName: !Ref EC2User1Name
       LoginProfile:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
@@ -83,7 +129,7 @@ Resources:
   EC2User2:
     Type: AWS::IAM::User
     Properties:
-      UserName: ec2-user2
+      UserName: !Ref EC2User2Name
       LoginProfile:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
@@ -93,7 +139,7 @@ Resources:
   S3User:
     Type: AWS::IAM::User
     Properties:
-      UserName: s3-user
+      UserName: !Ref S3UserName
       LoginProfile:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true

@@ -1,6 +1,15 @@
 template-file-path: cloudformation/policy.yaml
 stack-name: IAM-automation-lab
-parameters: {}
+parameters:
+  SecretName: TemporaryCredentials
+  TempPasswordLength: 16
+  S3PolicyName: S3ReadOnlyAccess
+  EC2PolicyName: EC2GroupAccess
+  S3GroupName: S3UserGroup
+  EC2GroupName: EC2UserGroup
+  EC2User1Name: ec2-user1
+  EC2User2Name: ec2-user2
+  S3UserName: s3-user
 tags:
   Project: iam-automation
   ManagedBy: GitSync
