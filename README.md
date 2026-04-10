@@ -64,6 +64,8 @@ Screenshots should be captured for each access attempt.
 
 ### Screenshots
 EC2 users:
+- Success (EC2 instance view): ![EC2 user1 success](screenshots/ec1-user-success.png)
+- Access denied (S3): ![EC2 user1 S3 denied](screenshots/ec1-user-failed-s3.png)
 - Success (EC2 instance creation): ![EC2 user success](screenshots/ec2-user-success-instancecreation.png)
 - Access denied (S3): ![EC2 user S3 denied](screenshots/ec2-user-failed-s3.png)
 
