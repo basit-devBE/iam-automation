@@ -1,7 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   IAM Resources Lab - Creating IAM users, groups, policies, temporary credentials stored in Secrets Manager
-
+## This CloudFormation template creates the following resources:
+# 1. A Secrets Manager secret to store temporary credentials for IAM users.
 Resources:
   TemporaryCredentialsSecret:
     Type: AWS::SecretsManager::Secret
