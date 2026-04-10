@@ -99,7 +99,7 @@ Resources:
         PasswordResetRequired: true
       Groups:
       - !Ref S3UserGroup
-
+##PPrint outputs
 Outputs:
   TemporaryCredentialsSecretName:
     Description: Name of the Secrets Manager secret storing the temporary password
