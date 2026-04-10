@@ -62,6 +62,15 @@ Expected results:
 
 Screenshots should be captured for each access attempt.
 
+### Screenshots
+EC2 users:
+- Success (EC2 instance creation): ![EC2 user success](screenshots/ec2-user-success-instancecreation.png)
+- Access denied (S3): ![EC2 user S3 denied](screenshots/ec2-user-failed-s3.png)
+
+S3 user:
+- Success (S3 bucket view): ![S3 user success](screenshots/s3-user-bucketview-enable.png)
+- Access denied (EC2): ![S3 user EC2 denied](screenshots/s3-user-errror.png)
+
 ## Security Considerations
 - Passwords are generated securely using AWS Secrets Manager
 - Users are required to change password at first login
