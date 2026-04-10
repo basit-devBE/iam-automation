@@ -90,10 +90,10 @@ Resources:
       Groups:
       - !Ref EC2UserGroup
 
-  S3User1:
+  S3User:
     Type: AWS::IAM::User
     Properties:
-      UserName: s3-user1
+      UserName: s3-user
       LoginProfile:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true

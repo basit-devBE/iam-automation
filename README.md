@@ -12,7 +12,7 @@ This project demonstrates automated creation and management of AWS IAM resources
 ### IAM Users
 - ec2-user1 (EC2 access)
 - ec2-user2 (EC2 access)
-- s3-user1 (S3 access)
+- s3-user (S3 access)
 
 ### IAM Groups
 - EC2UserGroup (EC2 permissions)
@@ -49,6 +49,10 @@ stack-name: IAM-automation-lab
 1. Push changes to the repository
 2. GitSync automatically updates the CloudFormation stack
 
+### GitSync Evidence
+GitSync enabled and syncing from GitHub:
+![GitSync status](screenshots/GitSync.png)
+
 ## Testing
 Each user is tested via AWS Console login.
 
@@ -58,14 +62,14 @@ Expected results:
 |------|-----------|----------|
 | ec2-user1 | Success | Access Denied |
 | ec2-user2 | Success | Access Denied |
-| s3-user1 | Access Denied | Success |
+| s3-user | Access Denied | Success |
 
 Screenshots should be captured for each access attempt.
 
 ### Screenshots
 EC2 users:
-- Success (EC2 instance view): ![EC2 user1 success](screenshots/ec1-user-success.png)
-- Access denied (S3): ![EC2 user1 S3 denied](screenshots/ec1-user-failed-s3.png)
+- Success (EC2 instance view): ![EC2 user1 success](screenshots/ec2-user1-success.png)
+- Access denied (S3): ![EC2 user1 S3 denied](screenshots/ec2-user1-failed-s3.png)
 - Success (EC2 instance creation): ![EC2 user success](screenshots/ec2-user-success-instancecreation.png)
 - Access denied (S3): ![EC2 user S3 denied](screenshots/ec2-user-failed-s3.png)
 
