@@ -3,7 +3,6 @@ Description: >
   IAM Resources Lab - Creating IAM users, groups, policies, temporary credentials stored in Secrets Manager
 
 Resources:
-
   TemporaryCredentialsSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
