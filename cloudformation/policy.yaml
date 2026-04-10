@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   IAM Resources Lab - Creating IAM users, groups, policies, temporary credentials stored in Secrets Manager
-
+##Parameters section defines input parameters for the CloudFormation stack, allowing customization of resource names and settings when deploying the stack.
 Parameters:
   SecretName:
     Type: String
