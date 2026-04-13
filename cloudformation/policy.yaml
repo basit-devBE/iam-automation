@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >
   IAM Resources Lab - Creating IAM users, groups, policies, temporary credentials stored in Secrets Manager
-##Parameters section defines input parameters for the CloudFormation stack, allowing customization of resource names and settings when deploying the stack.
+
 Parameters:
   SecretName:
     Type: String
@@ -43,6 +43,11 @@ Parameters:
     Default: ec2-user2
     Description: IAM username for the second EC2 user
 
+  EC2User2BoundaryPolicyName:
+    Type: String
+    Default: EC2User2PermissionBoundary
+    Description: Name of the permission boundary policy for ec2-user2 (restricts EC2 instance creation)
+
   S3UserName:
     Type: String
     Default: s3-user
@@ -69,20 +74,20 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Action:
-          - s3:ListAllMyBuckets
-          - s3:GetBucketLocation
-          Resource:
-          - arn:aws:s3:::*
+          - Effect: Allow
+            Action:
+              - s3:ListAllMyBuckets
+              - s3:GetBucketLocation
+            Resource:
+              - arn:aws:s3:::*
 
   S3UserGroup:
     Type: AWS::IAM::Group
     Properties:
       GroupName: !Ref S3GroupName
       ManagedPolicyArns:
-      - !Ref S3GroupPolicy
-      - arn:aws:iam::aws:policy/IAMUserChangePassword
+        - !Ref S3GroupPolicy
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -92,29 +97,29 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
-          Action:
-          - ec2:DescribeInstances
-          - ec2:RunInstances
-          - ec2:DescribeImages
-          - ec2:DescribeKeyPairs
-          - ec2:DescribeSecurityGroups
-          - ec2:DescribeSubnets
-          - ec2:DescribeVpcs
-          - ec2:CreateTags
-          - ec2:CreateKeyPair
-          - ec2:CreateSecurityGroup
-          - ec2:AuthorizeSecurityGroupIngress
-          - ec2:DescribeAvailabilityZones
-          Resource: '*'
+          - Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ec2:RunInstances
+              - ec2:DescribeImages
+              - ec2:DescribeKeyPairs
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcs
+              - ec2:CreateTags
+              - ec2:CreateKeyPair
+              - ec2:CreateSecurityGroup
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:DescribeAvailabilityZones
+            Resource: '*'
 
   EC2UserGroup:
     Type: AWS::IAM::Group
     Properties:
       GroupName: !Ref EC2GroupName
       ManagedPolicyArns:
-      - !Ref EC2GroupPolicy
-      - arn:aws:iam::aws:policy/IAMUserChangePassword
+        - !Ref EC2GroupPolicy
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2User1:
     Type: AWS::IAM::User
@@ -124,7 +129,35 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-      - !Ref EC2UserGroup
+        - !Ref EC2UserGroup
+
+  EC2User2PermissionBoundary:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Ref EC2User2BoundaryPolicyName
+      Description: "Permission boundary for ec2-user2 - allows all EC2 group actions except RunInstances"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeImages
+              - ec2:DescribeKeyPairs
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcs
+              - ec2:CreateTags
+              - ec2:CreateKeyPair
+              - ec2:CreateSecurityGroup
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:DescribeAvailabilityZones
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - iam:ChangePassword
+              - iam:GetAccountPasswordPolicy
+            Resource: '*'
 
   EC2User2:
     Type: AWS::IAM::User
@@ -134,7 +167,8 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-      - !Ref EC2UserGroup
+        - !Ref EC2UserGroup
+      PermissionsBoundary: !Ref EC2User2PermissionBoundary
 
   S3User:
     Type: AWS::IAM::User
@@ -144,7 +178,8 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-      - !Ref S3UserGroup
+        - !Ref S3UserGroup
+
 Outputs:
   TemporaryCredentialsSecretArn:
     Description: ARN of the Secrets Manager secret storing the temporary password
@@ -173,6 +208,10 @@ Outputs:
   EC2User2Name:
     Description: IAM username for the second EC2 user
     Value: !Ref EC2User2
+
+  EC2User2PermissionBoundaryArn:
+    Description: ARN of the permission boundary policy restricting ec2-user2 from creating EC2 instances
+    Value: !Ref EC2User2PermissionBoundary
 
   S3UserName:
     Description: IAM username for the S3 user
