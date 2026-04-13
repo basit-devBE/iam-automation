@@ -22,19 +22,31 @@ This project demonstrates automated creation and management of AWS IAM resources
 - EC2GroupAccess: Allows describing and launching EC2 instances
 - S3ReadOnlyAccess: Allows listing S3 buckets
 - IAMUserChangePassword: Allows users to change their own passwords
+- EC2User2PermissionBoundary: Permission boundary applied to ec2-user2 that restricts EC2 instance creation
 
 ### Secrets Manager
 - TemporaryCredentials: Stores auto-generated password used for all users
 
 ## Permissions Model
-- EC2 users can:
+- ec2-user1 can:
+  - View and launch EC2 instances
+  - Cannot access S3
+
+- ec2-user2 can:
   - View EC2 instances
-  - Launch EC2 instances
+  - Cannot launch EC2 instances (restricted by permission boundary)
   - Cannot access S3
 
 - S3 user can:
   - List S3 buckets
   - Cannot access EC2
+
+### Permission Boundary
+`ec2-user2` has a permission boundary (`EC2User2PermissionBoundary`) attached directly to the user. Both users belong to the same `EC2UserGroup` with identical group policies, but the boundary caps ec2-user2's effective permissions by omitting `ec2:RunInstances`. Effective permissions are the intersection of the identity-based policy and the boundary — so even though the group grants `RunInstances`, ec2-user2 is blocked.
+
+```
+ec2-user2 effective permissions = EC2GroupPolicy ∩ EC2User2PermissionBoundary
+```
 
 ## Deployment
 The stack is deployed using GitSync.
@@ -58,11 +70,11 @@ Each user is tested via AWS Console login.
 
 Expected results:
 
-| User | EC2 Access | S3 Access |
-|------|-----------|----------|
-| ec2-user1 | Success | Access Denied |
-| ec2-user2 | Success | Access Denied |
-| s3-user | Access Denied | Success |
+| User | EC2 View | EC2 Launch | S3 Access |
+|------|----------|------------|-----------|
+| ec2-user1 | Success | Success | Access Denied |
+| ec2-user2 | Success | Access Denied (boundary) | Access Denied |
+| s3-user | Access Denied | Access Denied | Success |
 
 Screenshots should be captured for each access attempt.
 
@@ -81,6 +93,7 @@ S3 user:
 - Passwords are generated securely using AWS Secrets Manager
 - Users are required to change password at first login
 - Least privilege access is enforced via IAM groups
+- Permission boundaries are used to restrict individual users within a group without modifying shared group policies
 
 ## Repository Structure
 ```
