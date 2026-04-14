@@ -43,6 +43,11 @@ Parameters:
     Default: ec2-user2
     Description: IAM username for the second EC2 user
 
+  EC2User3Name:
+    Type: String
+    Default: ec2-user3
+    Description: IAM username for the third EC2 user
+
   EC2User2BoundaryPolicyName:
     Type: String
     Default: EC2User2PermissionBoundary
