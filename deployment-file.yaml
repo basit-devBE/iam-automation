@@ -9,6 +9,7 @@ parameters:
   EC2GroupName: EC2UserGroup
   EC2User1Name: ec2-user1
   EC2User2Name: ec2-user2
+  EC2User3Name: ec2-user3
   S3UserName: s3-user
 tags:
   Project: iam-automation

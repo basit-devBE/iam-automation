@@ -74,20 +74,20 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Action:
-              - s3:ListAllMyBuckets
-              - s3:GetBucketLocation
-            Resource:
-              - arn:aws:s3:::*
+        - Effect: Allow
+          Action:
+          - s3:ListAllMyBuckets
+          - s3:GetBucketLocation
+          Resource:
+          - arn:aws:s3:::*
 
   S3UserGroup:
     Type: AWS::IAM::Group
     Properties:
       GroupName: !Ref S3GroupName
       ManagedPolicyArns:
-        - !Ref S3GroupPolicy
-        - arn:aws:iam::aws:policy/IAMUserChangePassword
+      - !Ref S3GroupPolicy
+      - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2GroupPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -97,29 +97,29 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Action:
-              - ec2:DescribeInstances
-              - ec2:RunInstances
-              - ec2:DescribeImages
-              - ec2:DescribeKeyPairs
-              - ec2:DescribeSecurityGroups
-              - ec2:DescribeSubnets
-              - ec2:DescribeVpcs
-              - ec2:CreateTags
-              - ec2:CreateKeyPair
-              - ec2:CreateSecurityGroup
-              - ec2:AuthorizeSecurityGroupIngress
-              - ec2:DescribeAvailabilityZones
-            Resource: '*'
+        - Effect: Allow
+          Action:
+          - ec2:DescribeInstances
+          - ec2:RunInstances
+          - ec2:DescribeImages
+          - ec2:DescribeKeyPairs
+          - ec2:DescribeSecurityGroups
+          - ec2:DescribeSubnets
+          - ec2:DescribeVpcs
+          - ec2:CreateTags
+          - ec2:CreateKeyPair
+          - ec2:CreateSecurityGroup
+          - ec2:AuthorizeSecurityGroupIngress
+          - ec2:DescribeAvailabilityZones
+          Resource: '*'
 
   EC2UserGroup:
     Type: AWS::IAM::Group
     Properties:
       GroupName: !Ref EC2GroupName
       ManagedPolicyArns:
-        - !Ref EC2GroupPolicy
-        - arn:aws:iam::aws:policy/IAMUserChangePassword
+      - !Ref EC2GroupPolicy
+      - arn:aws:iam::aws:policy/IAMUserChangePassword
 
   EC2User1:
     Type: AWS::IAM::User
@@ -129,7 +129,7 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-        - !Ref EC2UserGroup
+      - !Ref EC2UserGroup
 
   EC2User2PermissionBoundary:
     Type: AWS::IAM::ManagedPolicy
@@ -139,25 +139,25 @@ Resources:
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Effect: Allow
-            Action:
-              - ec2:DescribeInstances
-              - ec2:DescribeImages
-              - ec2:DescribeKeyPairs
-              - ec2:DescribeSecurityGroups
-              - ec2:DescribeSubnets
-              - ec2:DescribeVpcs
-              - ec2:CreateTags
-              - ec2:CreateKeyPair
-              - ec2:CreateSecurityGroup
-              - ec2:AuthorizeSecurityGroupIngress
-              - ec2:DescribeAvailabilityZones
-            Resource: '*'
-          - Effect: Allow
-            Action:
-              - iam:ChangePassword
-              - iam:GetAccountPasswordPolicy
-            Resource: '*'
+        - Effect: Allow
+          Action:
+          - ec2:DescribeInstances
+          - ec2:DescribeImages
+          - ec2:DescribeKeyPairs
+          - ec2:DescribeSecurityGroups
+          - ec2:DescribeSubnets
+          - ec2:DescribeVpcs
+          - ec2:CreateTags
+          - ec2:CreateKeyPair
+          - ec2:CreateSecurityGroup
+          - ec2:AuthorizeSecurityGroupIngress
+          - ec2:DescribeAvailabilityZones
+          Resource: '*'
+        - Effect: Allow
+          Action:
+          - iam:ChangePassword
+          - iam:GetAccountPasswordPolicy
+          Resource: '*'
 
   EC2User2:
     Type: AWS::IAM::User
@@ -167,8 +167,18 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-        - !Ref EC2UserGroup
+      - !Ref EC2UserGroup
       PermissionsBoundary: !Ref EC2User2PermissionBoundary
+
+  EC2User3:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Ref EC2User3Name
+      LoginProfile:
+        Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
+        PasswordResetRequired: true
+      Groups:
+      - !Ref EC2UserGroup
 
   S3User:
     Type: AWS::IAM::User
@@ -178,7 +188,7 @@ Resources:
         Password: !Sub '{{resolve:secretsmanager:${TemporaryCredentialsSecret}:SecretString:password}}'
         PasswordResetRequired: true
       Groups:
-        - !Ref S3UserGroup
+      - !Ref S3UserGroup
 
 Outputs:
   TemporaryCredentialsSecretArn:
